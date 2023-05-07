@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ogrenci_app/repostory/mesajlar_repostory.dart';
+import 'package:ogrenci_app/repostory/ogretmenler_repostory.dart';
 import 'pages/ogrenciler_sayfasi.dart';
 import 'pages/mesajlar_sayfasi.dart';
 import 'pages/ogretmenler_sayfasi.dart';
 import 'repostory/ogrenciler_repostory.dart';
-import 'repostory/mesajlar_repostory.dart';
-import 'repostory/ogretmenler_repostory.dart';
 
 void main() {
-  runApp(const OgrenciApp());
+  runApp(const ProviderScope(child: OgrenciApp()));
 }
 
 class OgrenciApp extends StatelessWidget {
@@ -25,25 +26,19 @@ class OgrenciApp extends StatelessWidget {
   }
 }
 
-class AnaSayfa extends StatefulWidget {
+class AnaSayfa extends ConsumerWidget {
   const AnaSayfa({super.key, required this.title});
 
   final String title;
 
   @override
-  State<AnaSayfa> createState() => _AnaSayfaState();
-}
-
-class _AnaSayfaState extends State<AnaSayfa> {
-  MesajlarRepository mesajlarRepository = MesajlarRepository();
-  OgrenciRepository ogrencilerRepository = OgrenciRepository();
-  OgretmenRepository ogretmenRepository = OgretmenRepository();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ogrencilerRepository = ref.watch(ogrencilerProvider);
+     final ogretmenRepository = ref.watch(ogretmenlerProvider);
+      final mesajlarRepository = ref.watch(mesajlarProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -53,7 +48,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
               onPressed: () {
                 _mesajlaraGit(context);
               },
-              child: Text('${mesajlarRepository.yeniMesajSayisi} Yeni Mesaj'),
+              child: Text('${ref.watch(yeniMesajSayisiProvider)} Yeni Mesaj'),
             ),
             TextButton(
               onPressed: () {
@@ -104,20 +99,20 @@ class _AnaSayfaState extends State<AnaSayfa> {
 
   void _ogretmenlereGit(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return OgretmenlerSayfasi(ogretmenRepository);
+      return const OgretmenlerSayfasi();
     }));
   }
 
   Future<void> _mesajlaraGit(BuildContext context) async {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return MesajlarSayfasi(mesajlarRepository);
+      return const MesajlarSayfasi();
     }));
-    setState(() {});
+    
   }
 
   void _ogrencilereGit(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return OgrencilerSayfasi(ogrencilerRepository);
+      return const OgrencilerSayfasi();
     }));
   }
 }

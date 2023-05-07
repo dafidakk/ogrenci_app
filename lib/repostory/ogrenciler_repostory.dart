@@ -1,4 +1,7 @@
-class OgrenciRepository {
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class OgrenciRepository extends ChangeNotifier {
   final List<Ogrenci> ogrenciler = [
     Ogrenci('Ali', 'Yılmaz', 18, 'Erkek'),
     Ogrenci('Ayşe', '', 20, 'Kadın')
@@ -12,12 +15,17 @@ class OgrenciRepository {
     } else {
       sevdiklerim.remove(ogrenci);
     }
+    notifyListeners();
   }
 
   bool seviyorMuyum(Ogrenci ogrenci) {
     return sevdiklerim.contains(ogrenci);
   }
 }
+
+final ogrencilerProvider = ChangeNotifierProvider((ref) {
+  return OgrenciRepository();
+});
 
 class Ogrenci {
   String ad;

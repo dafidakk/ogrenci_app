@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repostory/ogrenciler_repostory.dart';
 
-class OgrencilerSayfasi extends StatefulWidget {
-  final OgrenciRepository ogrencilerRepository;
-  const OgrencilerSayfasi(this.ogrencilerRepository, {super.key});
+class OgrencilerSayfasi extends ConsumerWidget {
+  const OgrencilerSayfasi({Key? key}) : super(key: key);
 
   @override
-  State<OgrencilerSayfasi> createState() => _OgrencilerSayfasiState();
-}
-
-class _OgrencilerSayfasiState extends State<OgrencilerSayfasi> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ogrencilerRepository = ref.watch(ogrencilerProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Öğrenciler'),
@@ -25,19 +21,18 @@ class _OgrencilerSayfasiState extends State<OgrencilerSayfasi> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: 32.0, horizontal: 32.0),
-                child: Text(
-                    '${widget.ogrencilerRepository.ogrenciler.length} Öğrenci'),
+                child:
+                    Text('${ogrencilerRepository.ogrenciler.length} Öğrenci'),
               ),
             ),
           ),
           Expanded(
             child: ListView.separated(
                 itemBuilder: (context, index) => OgrenciSatiri(
-                      widget.ogrencilerRepository.ogrenciler[index],
-                      widget.ogrencilerRepository,
+                      ogrencilerRepository.ogrenciler[index],
                     ),
                 separatorBuilder: (context, index) => const Divider(),
-                itemCount: widget.ogrencilerRepository.ogrenciler.length),
+                itemCount: ogrencilerRepository.ogrenciler.length),
           ),
         ],
       ),
@@ -45,40 +40,29 @@ class _OgrencilerSayfasiState extends State<OgrencilerSayfasi> {
   }
 }
 
-class OgrenciSatiri extends StatefulWidget {
+class OgrenciSatiri extends ConsumerWidget {
   final Ogrenci ogrenci;
-  final OgrenciRepository ogrencilerRepository;
+
   const OgrenciSatiri(
-    this.ogrenci,
-    this.ogrencilerRepository, {
+    this.ogrenci, {
     Key? key,
   }) : super(key: key);
 
   @override
-  State<OgrenciSatiri> createState() => _OgrenciSatiriState();
-}
-
-class _OgrenciSatiriState extends State<OgrenciSatiri> {
-
-  @override
-  Widget build(BuildContext context) {
-    bool seviyorMuyum = widget.ogrencilerRepository.seviyorMuyum(widget.ogrenci);
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool seviyorMuyum = ref.watch(ogrencilerProvider).seviyorMuyum(ogrenci);
     return ListTile(
-        title: Text('${widget.ogrenci.ad} ${widget.ogrenci.soyad}'),
+        title: Text('${ogrenci.ad} ${ogrenci.soyad}'),
         leading: IntrinsicWidth(
-            child: Center(
-                child: Text(widget.ogrenci.cinsiyet == 'Kadın'
-                    ? '🙎🏻‍♀️'
-                    : '🙎🏻‍♂️'))), //🙎🏻‍♂️
+          child: Center(
+            child: Text(ogrenci.cinsiyet == 'Kadın' ? '🙎🏻‍♀️' : '🙎🏻‍♂️'),
+          ),
+        ), //🙎🏻‍♂️
         trailing: IconButton(
           onPressed: () {
-            setState(() {
-              widget.ogrencilerRepository.sev(widget.ogrenci, !seviyorMuyum);
-            });
+            ref.read(ogrencilerProvider).sev(ogrenci, !seviyorMuyum);
           },
-          icon: Icon(seviyorMuyum
-              ? Icons.favorite
-              : Icons.favorite_border),
+          icon: Icon(seviyorMuyum ? Icons.favorite : Icons.favorite_border),
         ));
   }
 }
