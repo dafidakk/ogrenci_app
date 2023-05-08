@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repostory/ogretmenler_repostory.dart';
 
+import '../models/ogretmen.dart';
+
 class OgretmenlerSayfasi extends ConsumerWidget {
   const OgretmenlerSayfasi({super.key});
 
@@ -17,13 +19,25 @@ class OgretmenlerSayfasi extends ConsumerWidget {
           PhysicalModel(
             color: Colors.white,
             elevation: 10,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 32.0, horizontal: 32.0),
-                child:
-                    Text('${ogretmenRepository.ogretmenler.length} Öğretmen'),
-              ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 32.0, horizontal: 32.0),
+                    child: Text(
+                        '${ogretmenRepository.ogretmenler.length} Öğretmen'),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      onPressed: () {
+                        ref.read(ogretmenlerProvider).download();
+                      },
+                      icon: const Icon(Icons.download)),
+                ),
+              ],
             ),
           ),
           Expanded(
