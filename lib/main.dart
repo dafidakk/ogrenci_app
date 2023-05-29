@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repostory/mesajlar_repostory.dart';
 import 'package:ogrenci_app/repostory/ogretmenler_repostory.dart';
@@ -8,7 +9,11 @@ import 'pages/ogretmenler_sayfasi.dart';
 import 'repostory/ogrenciler_repostory.dart';
 
 void main() {
-  runApp(const ProviderScope(child: OgrenciApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(const ProviderScope(child: OgrenciApp())));
 }
 
 class OgrenciApp extends StatelessWidget {
@@ -34,8 +39,7 @@ class AnaSayfa extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ogrencilerRepository = ref.watch(ogrencilerProvider);
-     final ogretmenRepository = ref.watch(ogretmenlerProvider);
-      final mesajlarRepository = ref.watch(mesajlarProvider);
+    final ogretmenRepository = ref.watch(ogretmenlerProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -107,7 +111,6 @@ class AnaSayfa extends ConsumerWidget {
     await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return const MesajlarSayfasi();
     }));
-    
   }
 
   void _ogrencilereGit(BuildContext context) {

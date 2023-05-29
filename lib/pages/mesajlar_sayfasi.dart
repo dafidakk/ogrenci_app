@@ -8,6 +8,7 @@ class MesajlarSayfasi extends ConsumerStatefulWidget {
   const MesajlarSayfasi({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MesajlarSayfasiState createState() => _MesajlarSayfasiState();
 }
 

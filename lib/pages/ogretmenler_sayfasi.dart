@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repostory/ogretmenler_repostory.dart';
 
 import '../models/ogretmen.dart';
+import 'ogretmen/ogretmen_form.dart';
 
 class OgretmenlerSayfasi extends ConsumerWidget {
   const OgretmenlerSayfasi({super.key});
@@ -45,6 +47,23 @@ class OgretmenlerSayfasi extends ConsumerWidget {
                 itemCount: ogretmenRepository.ogretmenler.length),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final created =
+              await Navigator.of(context).push<bool>(MaterialPageRoute(
+            builder: (context) {
+              return const OgretmenForm();
+            },
+          ));
+
+          if (created == true) {
+            if (kDebugMode) {
+              print('Sayfayı yenile');
+            }
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
