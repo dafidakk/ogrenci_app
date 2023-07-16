@@ -5,7 +5,7 @@ import 'package:ogrenci_app/services/data_services.dart';
 import '../models/ogretmen.dart';
 
 class OgretmenRepository extends ChangeNotifier {
-  final List<Ogretmen> ogretmenler = [
+  List<Ogretmen> ogretmenler = [
     Ogretmen('Faruk', 'Yılmaz', 45, 'Erkek'),
     Ogretmen('Semiha', 'Çelik', 38, 'Kadın')
   ];
@@ -15,12 +15,21 @@ class OgretmenRepository extends ChangeNotifier {
 
   Future<void> indir() async {
     Ogretmen ogretmen = await dataService.ogretmenIndir();
-    
+
     ogretmenler.add(ogretmen);
     notifyListeners();
+  }
+
+  Future<List<Ogretmen>> hepsiniGetir() async {
+    ogretmenler = await dataService.ogretmenleriGetir();
+    return ogretmenler;
   }
 }
 
 final ogretmenlerProvider = ChangeNotifierProvider((ref) {
   return OgretmenRepository(ref.watch(dataServiceProvider));
+});
+
+final ogretmenlerListesiProvider = FutureProvider((ref) {
+  return ref.watch(ogretmenlerProvider).hepsiniGetir();
 });

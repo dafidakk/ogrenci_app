@@ -129,26 +129,41 @@ class _OgretmenFormState extends ConsumerState<OgretmenForm> {
   }
 
   Future<void> _kaydet() async {
-    try {
-      setState(() {
-        isSaving = true;
-      });
-      await ref.read(dataServiceProvider).ogretmenEkle(
-            Ogretmen.fromMap(girilen),
-          );
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Öpretmen kaydedildi')));
+    bool bitti = false;
 
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pop(true);
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      setState(() {
-        isSaving = false;
-      });
+    while (!bitti) {
+      try {
+        setState(() {
+          isSaving = true;
+        });
+        await gercektenKaydet();
+        bitti = true;
+        // ignore: use_build_context_synchronously
+        final showSnackBar = ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Öpretmen kaydedildi')));
+        showSnackBar.close;
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      } finally {
+        setState(() {
+          isSaving = false;
+        });
+      }
     }
+  }
+
+  int i = 0;
+
+  Future<void> gercektenKaydet() async {
+    i++;
+    if (i < 3) {
+      throw 'Kayıt yapılamadı';
+    }
+    await ref.read(dataServiceProvider).ogretmenEkle(
+          Ogretmen.fromMap(girilen),
+        );
   }
 }
